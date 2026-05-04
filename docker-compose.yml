@@ -13,4 +13,13 @@ services:
       - /dev/net/tun:/dev/net/tun
       - type: bind
         source: ./config.yaml
-        target: root/.config/mihomo/config.yaml
+        target: /root/.config/mihomo/config.yaml
+
+  metacubexd:
+    container_name: metacubexd
+    image: ghcr.io/metacubex/metacubexd
+    restart: always
+    ports:
+      - 8899:80
+    environment:
+      - DEFAULT_BACKEND_URL=http://127.0.0.1:8890
