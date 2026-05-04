@@ -1,0 +1,393 @@
+#
+# Core settings
+#
+# see more: https://wiki.metacubex.one/en/config/general/
+#
+allow-lan: false
+log-level: warning
+ipv6: false
+udp: true
+
+unified-delay: true
+disable-keep-alive: false
+keep-alive-interval: 30
+keep-alive-idle: 30
+
+find-process-mode: always
+tcp-concurrent: true
+
+external-controller: 127.0.0.1:8890
+external-ui: yacd
+external-ui-name: yacd
+secret: ""
+
+profile:
+  store-selected: true
+  store-fake-ip: false
+
+#
+# TUN settings
+#
+# see more: https://wiki.metacubex.one/en/config/inbound/tun/
+#
+tun:
+  stack: gvisor
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+  strict-route: true
+  mtu: 1500
+  dns-hijack: [any:53, tcp://any:53]
+
+#
+# NTP settings
+#
+# see more: https://wiki.metacubex.one/en/config/ntp/
+#
+ntp:
+  enable: true
+  server: time.cloudflare.com
+  port: 123
+  interval: 30
+
+#
+# SNIFFING settings
+#
+# see more: https://wiki.metacubex.one/en/config/sniff/
+#
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+
+#
+# DNS settings
+# fake-ip     all traffic by default (198.18.0.0/16 pool), upstream DNS resolver
+# real-ip     .lan through local network resolver
+#             STUN/TURN through Cloudflare DNS
+#             all RU rule-sets through Yandex DNS
+#
+# see more: https://wiki.metacubex.one/en/config/dns/
+#           https://wiki.metacubex.one/en/config/dns/diagram/
+#
+dns:
+  enable: true
+  cache-algorithm: arc
+  listen: 127.0.0.1:53
+  respect-rules: false
+  ipv6: false
+
+  default-nameserver: [1.1.1.1, 1.0.0.1]
+  nameserver: [https://cloudflare-dns.com/dns-query, tls://1.1.1.1, tls://1.0.0.1]
+
+  nameserver-policy:
+    # "+.lan": [10.1.0.1]
+    "rule-set:geosite-category-ru,geosite-tld-ru,geosite-gov-ru,geosite-bank-ru,geosite-yandex,geosite-ru-available-only-inside":
+    - https://common.dot.dns.yandex.net/dns-query
+    - tls://77.88.8.8
+    - 77.88.8.8
+    - 77.88.8.1
+
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.0/15
+  fake-ip-filter-mode: rule
+  fake-ip-filter:
+    - DOMAIN,localhost,real-ip # 127.0.0.1
+    - DOMAIN-SUFFIX,lan,real-ip
+    - DOMAIN-KEYWORD,stun,real-ip
+    - DOMAIN-KEYWORD,turn,real-ip
+
+    - RULE-SET,geosite-category-ru,real-ip
+    - RULE-SET,geosite-tld-ru,real-ip
+    - RULE-SET,geosite-gov-ru,real-ip
+    - RULE-SET,geosite-bank-ru,real-ip
+    - RULE-SET,geosite-yandex,real-ip
+    - RULE-SET,geosite-ru-available-only-inside,real-ip
+
+    - MATCH,fake-ip
+
+#
+# LISTENERS settings
+#
+# see more: https://wiki.metacubex.one/en/config/listeners/
+#
+listeners:
+  - name: mixed-in
+    type: mixed
+    listen: 127.0.0.1
+    port: 8888
+    udp: true
+    users:
+      - username: username
+        password: "password"
+
+#
+# PROXIES settings
+#
+# see more: https://wiki.metacubex.one/en/config/proxies/
+#
+proxies:
+  - name: VLESS
+    dialer-proxy: GATEWAY-PROXY
+    type: vless
+    network: tcp
+    server: SERVER
+    port: 443
+    udp: true
+    uuid: UUID
+    flow: xtls-rprx-vision
+    packet-encoding: xudp
+    tls: true
+    servername: SERVER
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: PBK
+      short-id: SID
+
+  - name: HYSTERIA
+    dialer-proxy: GATEWAY-PROXY
+    type: hysteria2
+    server: SERVER
+    # up: "100 Mbps"
+    # down: "100 Mbps"
+    port: 443
+    udp: true
+    password: "USER:PASSWORD"
+    # obfs: salamander
+    # obfs-password: ""
+    sni: SERVER
+    skip-cert-verify: false
+
+#
+# PROXY PROVIDERS settings
+# x-proxy-providers-defaults - common fields
+# x-proxy-providers-override - additional common fields
+#
+# regular-openray, whitelist-cidr-georu as a providers examples
+#
+# see more: https://wiki.metacubex.one/en/config/proxy-providers/
+#           https://wiki.metacubex.one/en/config/proxy-providers/content/
+#
+x-proxy-providers-defaults: &pp-defaults
+  type: http
+  interval: 0
+  proxy: PROXY
+  exclude-type: ss|vmess
+
+x-proxy-providers-override:
+  udp-and-dialer: &ppo-1
+    override:
+      dialer-proxy: GATEWAY-PROXY
+      udp: true
+
+  udp-only: &ppo-2
+    override:
+      udp: true
+
+proxy-providers:
+  # source: https://github.com/sakha1370/OpenRay
+  regular-openray:
+    <<: [*pp-defaults, *ppo-1]
+    url: https://raw.githubusercontent.com/sakha1370/OpenRay/main/output/kind/trojan.txt
+    path: ./providers/regular-openray.txt
+
+  # ---
+
+  # source: https://github.com/igareck/vpn-configs-for-russia
+  whitelist-cidr-georu:
+    <<: [*pp-defaults, *ppo-2]
+    url: https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-all.txt
+    path: ./providers/whitelist-cidr-georu.txt
+
+#
+# PROXY GROUPS settings
+# x-proxy-groups-defaults - common fields
+#
+# PROXY                   main proxies selector
+# GATEWAY-PROXY           controls how proxied(PROXY selector) traffic exits
+# GATEWAY-RU              controls how RU(based on rules) traffic exits
+# REGULAR-OPENRAY         provider-backed selector for openray proxies
+# WHITELIST-CIDR-GEORU    provider-backed selector for GeoRU CIDR whitelist
+# note: REJECT serves as a kill-switch
+#
+# see more: https://wiki.metacubex.one/en/config/proxy-groups/
+#
+x-proxy-groups-defaults: &pg-defaults
+  url: https://cp.cloudflare.com/generate_204
+  expected-status: 204
+  interval: 0
+  timeout: 5000
+  lazy: false
+
+proxy-groups:
+  - name: PROXY
+    <<: [*pg-defaults]
+    type: select
+    interval: 30
+    proxies:
+      - VLESS
+      - HYSTERIA
+      - REGULAR-OPENRAY
+      - REJECT
+
+  - name: GATEWAY-PROXY
+    <<: [*pg-defaults]
+    type: select
+    interval: 30
+    proxies:
+      - DIRECT
+      - WHITELIST-CIDR-GEORU
+      - REJECT
+
+  - name: GATEWAY-RU
+    <<: [*pg-defaults]
+    type: select
+    interval: 30
+    proxies:
+      - DIRECT
+      - WHITELIST-CIDR-GEORU
+      - REJECT
+
+  # ---
+
+  - name: REGULAR-OPENRAY
+    <<: [*pg-defaults]
+    type: select
+    proxies:
+      - REJECT
+    use:
+      - regular-openray
+
+  # ---
+
+  - name: WHITELIST-CIDR-GEORU
+    <<: [*pg-defaults]
+    type: select
+    proxies:
+      - REJECT
+    use:
+      - whitelist-cidr-georu
+
+#
+# RULE PROVIDERS settings
+# x-rule-providers-defaults - common fields
+#
+# see more: https://wiki.metacubex.one/en/config/rule-providers/
+#
+x-rule-providers-defaults: &rp-defaults
+  type: http
+  interval: 86400
+  proxy: PROXY
+
+rule-providers:
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geoip-private:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs
+    path: ./rules/geoip-private.mrs
+    format: mrs
+    behavior: ipcidr
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geoip-ru:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/ru.mrs
+    path: ./rules/geoip-ru.mrs
+    format: mrs
+    behavior: ipcidr
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geoip-telegram:
+    <<: [*rp-defaults]
+    url: https://core.telegram.org/resources/cidr.txt
+    path: ./rules/geoip-telegram.txt
+    format: text
+    behavior: ipcidr
+
+  # ---
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geosite-telegram:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs
+    path: ./rules/geosite-telegram.mrs
+    format: mrs
+    behavior: domain
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geosite-category-ru:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ru.mrs
+    path: ./rules/geosite-category-ru.mrs
+    format: mrs
+    behavior: domain
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geosite-tld-ru:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tld-ru.mrs
+    path: ./rules/geosite-tld-ru.mrs
+    format: mrs
+    behavior: domain
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geosite-gov-ru:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-gov-ru.mrs
+    path: ./rules/geosite-gov-ru.mrs
+    format: mrs
+    behavior: domain
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geosite-bank-ru:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-bank-ru.mrs
+    path: ./rules/geosite-bank-ru.mrs
+    format: mrs
+    behavior: domain
+
+  # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
+  geosite-yandex:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/yandex.mrs
+    path: ./rules/geosite-yandex.mrs
+    format: mrs
+    behavior: domain
+
+  # source: https://github.com/itdoginfo/allow-domains/
+  geosite-ru-available-only-inside:
+    <<: [*rp-defaults]
+    url: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/outside-raw.lst
+    path: ./rules/geosite-itdoginfo-allow-domains-outside.lst
+    format: text
+    behavior: domain
+
+#
+# RULES settings
+#
+# see more: https://wiki.metacubex.one/en/config/rules/
+#
+rules:
+  - IP-CIDR6,::/0,REJECT
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT
+  - RULE-SET,geoip-private,DIRECT,no-resolve
+
+  - RULE-SET,geosite-telegram,PROXY
+  - RULE-SET,geoip-telegram,PROXY,no-resolve
+
+  - RULE-SET,geosite-yandex,GATEWAY-RU
+  - RULE-SET,geosite-bank-ru,GATEWAY-RU
+  - RULE-SET,geosite-ru-available-only-inside,GATEWAY-RU
+  - RULE-SET,geosite-gov-ru,GATEWAY-RU
+  - RULE-SET,geosite-category-ru,GATEWAY-RU
+  - RULE-SET,geosite-tld-ru,GATEWAY-RU
+  - RULE-SET,geoip-ru,GATEWAY-RU,no-resolve
+
+  - MATCH,PROXY
