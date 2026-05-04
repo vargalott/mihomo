@@ -52,7 +52,7 @@ ntp:
   enable: true
   server: time.cloudflare.com
   port: 123
-  interval: 30
+  interval: 1800
 
 #
 # SNIFFING settings
@@ -73,7 +73,7 @@ sniffer:
 
 #
 # DNS settings
-# fake-ip     all traffic by default (198.18.0.0/16 pool), upstream DNS resolver
+# fake-ip     all traffic by default (198.18.0.0/15 pool), upstream DNS resolver
 # real-ip     .lan through local network resolver
 #             STUN/TURN through Cloudflare DNS
 #             all RU rule-sets through Yandex DNS
@@ -92,7 +92,7 @@ dns:
   nameserver: [ https://cloudflare-dns.com/dns-query, tls://1.1.1.1, tls://1.0.0.1 ]
 
   nameserver-policy:
-    # "+.lan": [10.1.0.1]
+    "+.lan": [ 10.1.0.1 ]
     "rule-set:geosite-category-ru,geosite-tld-ru,geosite-gov-ru,geosite-bank-ru,geosite-yandex,geosite-ru-available-only-inside":
     - https://common.dot.dns.yandex.net/dns-query
     - tls://77.88.8.8
@@ -163,7 +163,7 @@ proxies:
     # down: "100 Mbps"
     port: 443
     udp: true
-    password: "USER:PASSWORD"
+    password: "username:password"
     # obfs: salamander
     # obfs-password: ""
     sni: SERVER
