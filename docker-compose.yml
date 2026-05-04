@@ -1,0 +1,16 @@
+name: mihomo
+
+services:
+  mihomo:
+    container_name: mihomo
+    image: docker.io/metacubex/mihomo:latest
+    restart: always
+    pid: host
+    network_mode: host
+    cap_add:
+      - ALL
+    volumes:
+      - /dev/net/tun:/dev/net/tun
+      - type: bind
+        source: ./config.yaml
+        target: root/.config/mihomo/config.yaml
