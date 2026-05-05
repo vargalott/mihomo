@@ -53,7 +53,7 @@ Traffic enters Mihomo two ways:
 
 | | | |
 |-|-|-|
-| `VLESS` | VLESS + XTLS Vision + REALITY | gigh-performance, censorship-resistant; client-fingerprint spoofing (chrome) |
+| `VLESS` | VLESS + XTLS Vision + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (chrome) |
 | `HYSTERIA` | Hysteria2 (QUIC-based) | fast for high-bandwidth; password auth |
 
 ---
