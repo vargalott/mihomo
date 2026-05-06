@@ -23,7 +23,7 @@ secret: "secret"
 # defined under `listeners:` and require the global-scope equivalents instead;
 # if per-listener auth or port config isn't being picked up, fall back to:
 # mixed-port: 8888
-# authentication: [ "username:password" ]
+# authentication: ["username:password"]
 
 profile:
   store-selected: true
@@ -41,7 +41,7 @@ tun:
   auto-detect-interface: true
   strict-route: true
   mtu: 1500
-  dns-hijack: [ any:53, tcp://any:53 ]
+  dns-hijack: [any:53, tcp://any:53]
 
 #
 # NTP settings
@@ -65,11 +65,11 @@ sniffer:
   override-destination: true
   sniff:
     HTTP:
-      ports: [ 80, 8080-8880 ]
+      ports: [80, 8080-8880]
     TLS:
-      ports: [ 443, 8443 ]
+      ports: [443, 8443]
     QUIC:
-      ports: [ 443, 8443 ]
+      ports: [443, 8443]
 
 #
 # DNS settings
@@ -88,16 +88,17 @@ dns:
   respect-rules: false
   ipv6: false
 
-  default-nameserver: [ 1.1.1.1, 1.0.0.1 ]
-  nameserver: [ https://cloudflare-dns.com/dns-query, tls://1.1.1.1, tls://1.0.0.1 ]
+  default-nameserver: [1.1.1.1, 1.0.0.1]
+  nameserver:
+    [https://cloudflare-dns.com/dns-query, tls://1.1.1.1, tls://1.0.0.1]
 
   nameserver-policy:
-    "+.lan": [ 10.1.0.1 ]
+    "+.lan": [10.1.0.1]
     "rule-set:geosite-category-ru,geosite-tld-ru,geosite-gov-ru,geosite-bank-ru,geosite-yandex,geosite-ru-available-only-inside":
-    - https://common.dot.dns.yandex.net/dns-query
-    - tls://77.88.8.8
-    - 77.88.8.8
-    - 77.88.8.1
+      - https://common.dot.dns.yandex.net/dns-query
+      - tls://77.88.8.8
+      - 77.88.8.8
+      - 77.88.8.1
 
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.0/15
@@ -198,7 +199,7 @@ x-proxy-providers-override:
 proxy-providers:
   # source: https://github.com/sakha1370/OpenRay
   regular-openray:
-    <<: [ *pp-defaults, *ppo-1 ]
+    <<: [*pp-defaults, *ppo-1]
     url: https://raw.githubusercontent.com/sakha1370/OpenRay/main/output/kind/trojan.txt
     path: ./providers/regular-openray.txt
 
@@ -206,7 +207,7 @@ proxy-providers:
 
   # source: https://github.com/igareck/vpn-configs-for-russia
   whitelist-cidr-georu:
-    <<: [ *pp-defaults, *ppo-2 ]
+    <<: [*pp-defaults, *ppo-2]
     url: https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-all.txt
     path: ./providers/whitelist-cidr-georu.txt
 
@@ -232,37 +233,38 @@ x-proxy-groups-defaults: &pg-defaults
 
 proxy-groups:
   - name: PROXY
-    <<: [ *pg-defaults ]
+    <<: [*pg-defaults]
     type: select
     interval: 30
     proxies:
+      # - DIRECT
+      - REJECT
       - VLESS
       - HYSTERIA
       - REGULAR-OPENRAY
-      - REJECT
 
   - name: GATEWAY-PROXY
-    <<: [ *pg-defaults ]
+    <<: [*pg-defaults]
     type: select
     interval: 30
     proxies:
       - DIRECT
-      - WHITELIST-CIDR-GEORU
       - REJECT
+      - WHITELIST-CIDR-GEORU
 
   - name: GATEWAY-RU
-    <<: [ *pg-defaults ]
+    <<: [*pg-defaults]
     type: select
     interval: 30
     proxies:
       - DIRECT
-      - WHITELIST-CIDR-GEORU
       - REJECT
+      - WHITELIST-CIDR-GEORU
 
   # ---
 
   - name: REGULAR-OPENRAY
-    <<: [ *pg-defaults ]
+    <<: [*pg-defaults]
     type: select
     proxies:
       - REJECT
@@ -272,7 +274,7 @@ proxy-groups:
   # ---
 
   - name: WHITELIST-CIDR-GEORU
-    <<: [ *pg-defaults ]
+    <<: [*pg-defaults]
     type: select
     proxies:
       - REJECT
@@ -293,7 +295,7 @@ x-rule-providers-defaults: &rp-defaults
 rule-providers:
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geoip-private:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs
     path: ./rules/geoip-private.mrs
     format: mrs
@@ -301,7 +303,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geoip-ru:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/ru.mrs
     path: ./rules/geoip-ru.mrs
     format: mrs
@@ -309,7 +311,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geoip-telegram:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://core.telegram.org/resources/cidr.txt
     path: ./rules/geoip-telegram.txt
     format: text
@@ -319,7 +321,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geosite-telegram:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs
     path: ./rules/geosite-telegram.mrs
     format: mrs
@@ -327,7 +329,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geosite-category-ru:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ru.mrs
     path: ./rules/geosite-category-ru.mrs
     format: mrs
@@ -335,7 +337,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geosite-tld-ru:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tld-ru.mrs
     path: ./rules/geosite-tld-ru.mrs
     format: mrs
@@ -343,7 +345,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geosite-gov-ru:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-gov-ru.mrs
     path: ./rules/geosite-gov-ru.mrs
     format: mrs
@@ -351,7 +353,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geosite-bank-ru:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-bank-ru.mrs
     path: ./rules/geosite-bank-ru.mrs
     format: mrs
@@ -359,7 +361,7 @@ rule-providers:
 
   # source: https://github.com/MetaCubeX/meta-rules-dat/tree/meta
   geosite-yandex:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/yandex.mrs
     path: ./rules/geosite-yandex.mrs
     format: mrs
@@ -367,7 +369,7 @@ rule-providers:
 
   # source: https://github.com/itdoginfo/allow-domains/
   geosite-ru-available-only-inside:
-    <<: [ *rp-defaults ]
+    <<: [*rp-defaults]
     url: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/outside-raw.lst
     path: ./rules/geosite-itdoginfo-allow-domains-outside.lst
     format: text
