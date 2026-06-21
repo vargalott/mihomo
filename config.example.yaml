@@ -16,7 +16,7 @@ keep-alive-idle: 30
 find-process-mode: always
 tcp-concurrent: true
 
-external-controller: 127.0.0.1:8890
+external-controller: 127.0.0.1:9999
 secret: "secret"
 
 # most gui clients ignore listener-scoped mixed port (http/socks) settings

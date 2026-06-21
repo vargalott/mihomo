@@ -1,6 +1,7 @@
 name: mihomo
 
 services:
+  # https://github.com/MetaCubeX/mihomo/tree/Meta
   mihomo:
     container_name: mihomo
     image: docker.io/metacubex/mihomo:latest
@@ -15,11 +16,28 @@ services:
         source: ./config.yaml
         target: /root/.config/mihomo/config.yaml
 
+  # https://github.com/MetaCubeX/metacubexd
   metacubexd:
     container_name: metacubexd
-    image: ghcr.io/metacubex/metacubexd
+    image: ghcr.io/metacubex/metacubexd:latest
     restart: always
     ports:
-      - 8899:80
+      - 10000:80
     environment:
-      - DEFAULT_BACKEND_URL=http://127.0.0.1:8890
+      - DEFAULT_BACKEND_URL=http://127.0.0.1:9999
+
+  # https://github.com/Zephyruso/zashboard
+  # zashboard:
+  #   container_name: zashboard
+  #   image: ghcr.io/zephyruso/zashboard:latest
+  #   restart: always
+  #   ports:
+  #     - 10001:80
+
+  # https://github.com/haishanh/yacd
+  # yacd:
+  #   container_name: yacd
+  #   image: ghcr.io/haishanh/yacd:master
+  #   restart: always
+  #   ports:
+  #     - 10002:80
