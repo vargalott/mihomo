@@ -23,7 +23,8 @@ secret: "secret"
 # defined under `listeners:` and require the global-scope equivalents instead;
 # if per-listener auth or port config isn't being picked up, fall back to:
 # mixed-port: 8888
-# authentication: ["username:password"]
+# authentication:
+#   - "username:password"
 
 profile:
   store-selected: true
@@ -41,7 +42,9 @@ tun:
   auto-detect-interface: true
   strict-route: true
   mtu: 1500
-  dns-hijack: [any:53, tcp://any:53]
+  dns-hijack:
+    - any:53
+    - tcp://any:53
 
 #
 # NTP settings
@@ -88,17 +91,23 @@ dns:
   respect-rules: false
   ipv6: false
 
-  default-nameserver: [1.1.1.1, 1.0.0.1]
+  default-nameserver:
+    - 1.1.1.1
+    - 1.0.0.1
   nameserver:
-    [https://cloudflare-dns.com/dns-query, tls://1.1.1.1, tls://1.0.0.1]
+    - https://1.1.1.1/dns-query#DIRECT
+    - https://1.0.0.1/dns-query#DIRECT
+    - tls://1.1.1.1#DIRECT
+    - tls://1.0.0.1#DIRECT
 
   nameserver-policy:
-    "+.lan": [10.1.0.1]
+    "+.lan":
+      - 10.1.0.1#DIRECT
     "rule-set:geosite-category-ru,geosite-tld-ru,geosite-gov-ru,geosite-bank-ru,geosite-yandex,geosite-ru-available-only-inside":
-      - https://common.dot.dns.yandex.net/dns-query
-      - tls://77.88.8.8
-      - 77.88.8.8
-      - 77.88.8.1
+      - https://77.88.8.8/dns-query#DIRECT
+      - tls://77.88.8.8#DIRECT
+      - 77.88.8.8#DIRECT
+      - 77.88.8.1#DIRECT
 
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.0/15
@@ -143,14 +152,14 @@ proxies:
     dialer-proxy: GATEWAY-PROXY
     type: vless
     network: tcp
-    server: SERVER
+    server: DOMAIN/IP
     port: 443
     udp: true
     uuid: UUID
     flow: xtls-rprx-vision
     packet-encoding: xudp
     tls: true
-    servername: SERVER
+    servername: SNI
     client-fingerprint: chrome
     reality-opts:
       public-key: PBK
@@ -159,7 +168,7 @@ proxies:
   - name: HYSTERIA
     dialer-proxy: GATEWAY-PROXY
     type: hysteria2
-    server: SERVER
+    server: DOMAIN/IP
     # up: "100 Mbps"
     # down: "100 Mbps"
     port: 443
@@ -167,7 +176,7 @@ proxies:
     password: "username:password"
     # obfs: salamander
     # obfs-password: ""
-    sni: SERVER
+    sni: SNI
     skip-cert-verify: false
 
 #
@@ -211,6 +220,12 @@ proxy-providers:
     url: https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-all.txt
     path: ./providers/whitelist-cidr-georu.txt
 
+  # source: https://github.com/ksenkovsolo/HardVPN-bypass-WhiteLists-
+  whitelist-bypass:
+    <<: [*pp-defaults, *ppo-2]
+    url: https://raw.githubusercontent.com/ksenkovsolo/HardVPN-bypass-WhiteLists-/main/vpn-lte/WHITELIST-ALL.txt
+    path: ./providers/whitelist-bypass.txt
+
 #
 # PROXY GROUPS settings
 # x-proxy-groups-defaults - common fields
@@ -251,6 +266,7 @@ proxy-groups:
       - DIRECT
       - REJECT
       - WHITELIST-CIDR-GEORU
+      - WHITELIST-BYPASS
 
   - name: GATEWAY-RU
     <<: [*pg-defaults]
@@ -260,6 +276,7 @@ proxy-groups:
       - DIRECT
       - REJECT
       - WHITELIST-CIDR-GEORU
+      - WHITELIST-BYPASS
 
   # ---
 
@@ -280,6 +297,14 @@ proxy-groups:
       - REJECT
     use:
       - whitelist-cidr-georu
+
+  - name: WHITELIST-BYPASS
+    <<: [*pg-defaults]
+    type: select
+    proxies:
+      - REJECT
+    use:
+      - whitelist-bypass
 
 #
 # RULE PROVIDERS settings
