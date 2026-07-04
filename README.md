@@ -24,7 +24,7 @@ docker compose up -d
 | `GATEWAY-PROXY` | Controls how `PROXY`-bound traffic (`VLESS`/`HYSTERIA`/etc) exits - i.e., what the proxy client itself routes through |
 | `GATEWAY-RU` | Controls how `RU` traffic exits independently |
 
-Main proxies carries `dialer-proxy: GATEWAY-PROXY` - this means the proxy client connections themselves are subject to a second routing decision; for example, you can route main proxy through `WHITELIST-CIDR-GEORU` (a split-tunnel whitelist of RU CIDRs) instead of `DIRECT` so that the proxy server appears reachable even if the local ISP/DPI applies selective blocking
+Main proxies carries `dialer-proxy: GATEWAY-PROXY` - this means the proxy client connections themselves are subject to a second routing decision; for example, you can route main proxy through `WHITELIST-CIDR-GEORU` or `WHITELIST-BYPASS` (a split-tunnel whitelist of RU CIDRs) instead of `DIRECT` so that the proxy server appears reachable even if the local ISP/DPI applies selective blocking
 
 ```
 traffic
@@ -36,11 +36,11 @@ mihomo (tun/mixed)
    |--> UDP/443 (quic) ---------------> REJECT
    |--> private ranges ---------------> DIRECT
    |
-   |--> specific rules(proxy) --------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT or WHITELIST-CIDR-GEORU
+   |--> specific rules(proxy) --------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT | WHITELIST-CIDR-GEORU | WHITELIST-BYPASS
    |
-   |--> RU domains/ips ---------------> GATEWAY-RU -----> DIRECT or WHITELIST-CIDR-GEORU
+   |--> RU domains/ips ---------------> GATEWAY-RU -----> DIRECT | WHITELIST-CIDR-GEORU | WHITELIST-BYPASS
    |
-   |--> everything else --------------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT or WHITELIST-CIDR-GEORU
+   |--> everything else --------------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT | WHITELIST-CIDR-GEORU | WHITELIST-BYPASS
 ```
 
 #### Ingress
@@ -131,10 +131,9 @@ All fetched through `PROXY`, cached locally, `interval: 86400` (daily refresh)
 - Don't forget to change the placeholder values, such as `secret`, `username`, `password`, `SERVER`, `UUID`, `PBK`, `SID`
 - `listeners:` block - defines per-listener mixed-in auth, but most GUI clients only read the global `mixed-port` / `authentication` settings (or even sets them unconditionally) and silently ignore listener-scoped config; if auth isn't being enforced, fall back to the commented-out global equivalents in the config
 - It is a good design practice to make `proxies: - REJECT` for each `proxy-group` that come from `proxy-provider`; serves as a kill-switch in cases of broken upstream subscription
-- `REGULAR-OPENRAY`, `WHITELIST-CIDR-GEORU` is just an examples of importing generic proxy subscriptions(plain text or base64 `vless://`, `ss://`, etc remote configs)
+- `REGULAR-OPENRAY`, `WHITELIST-CIDR-GEORU`, `WHITELIST-BYPASS` are just an examples of importing generic proxy subscriptions(plain text or base64 `vless://`, `ss://`, etc remote configs)
 - `ntp`: Cloudflare time server, synced every 30 minutes
 - `sniffer`: `HTTP (80, 8080–8880)`, `TLS (443, 8443)`, `QUIC (443, 8443)` - enables domain sniffing from raw TCP/UDP for accurate rule matching without DNS QUIC is still sniffing even tough it's routing is blocked in rules
 - `external-controller`: `127.0.0.1:8890` - for dashboards (metacubexd, yacd etc)
 - `process-mode`: `always` - enables per-process rule matching if needed
 - `tcp-concurrent`: `enabled` - parallel connection attempts for lower latency
-
