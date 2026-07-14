@@ -252,8 +252,8 @@ proxy-groups:
     type: select
     interval: 30
     proxies:
-      # - DIRECT
       - REJECT
+      # - DIRECT
       - VLESS
       - HYSTERIA
       - REGULAR-OPENRAY
@@ -263,8 +263,8 @@ proxy-groups:
     type: select
     interval: 30
     proxies:
-      - DIRECT
       - REJECT
+      - DIRECT
       - WHITELIST-CIDR-GEORU
       - WHITELIST-BYPASS
 
@@ -273,8 +273,8 @@ proxy-groups:
     type: select
     interval: 30
     proxies:
-      - DIRECT
       - REJECT
+      - DIRECT
       - WHITELIST-CIDR-GEORU
       - WHITELIST-BYPASS
 
