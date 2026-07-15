@@ -8,14 +8,14 @@ services:
     restart: always
     pid: host
     network_mode: host
-    cap_drop:
-      - ALL
     cap_add:
-      - NET_ADMIN
+      - ALL
+    devices:
+      - /dev/net/tun:/dev/net/tun
     volumes:
       - type: bind
-        source: /dev/net/tun
-        target: /dev/net/tun
+        source: ./data
+        target: /root/.config/mihomo
       - type: bind
         source: ./config.yaml
         target: /root/.config/mihomo/config.yaml
