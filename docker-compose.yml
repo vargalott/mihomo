@@ -1,22 +1,26 @@
 name: mihomo
 
 services:
-  # https://github.com/MetaCubeX/mihomo/tree/Meta
+  # source: https://github.com/MetaCubeX/mihomo/tree/Meta
   mihomo:
     container_name: mihomo
     image: docker.io/metacubex/mihomo:latest
     restart: always
     pid: host
     network_mode: host
-    cap_add:
+    cap_drop:
       - ALL
+    cap_add:
+      - NET_ADMIN
     volumes:
-      - /dev/net/tun:/dev/net/tun
+      - type: bind
+        source: /dev/net/tun
+        target: /dev/net/tun
       - type: bind
         source: ./config.yaml
         target: /root/.config/mihomo/config.yaml
 
-  # https://github.com/MetaCubeX/metacubexd
+  # source: https://github.com/MetaCubeX/metacubexd
   metacubexd:
     container_name: metacubexd
     image: ghcr.io/metacubex/metacubexd:latest
@@ -26,7 +30,7 @@ services:
     environment:
       - DEFAULT_BACKEND_URL=http://127.0.0.1:9999
 
-  # https://github.com/Zephyruso/zashboard
+  # source: https://github.com/Zephyruso/zashboard
   # zashboard:
   #   container_name: zashboard
   #   image: ghcr.io/zephyruso/zashboard:latest
@@ -34,7 +38,7 @@ services:
   #   ports:
   #     - 10001:80
 
-  # https://github.com/haishanh/yacd
+  # source: https://github.com/haishanh/yacd
   # yacd:
   #   container_name: yacd
   #   image: ghcr.io/haishanh/yacd:master
