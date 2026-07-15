@@ -97,15 +97,12 @@ dns:
   nameserver:
     - https://1.1.1.1/dns-query#DIRECT
     - https://1.0.0.1/dns-query#DIRECT
-    - tls://1.1.1.1#DIRECT
-    - tls://1.0.0.1#DIRECT
 
   nameserver-policy:
     "+.lan":
       - 10.1.0.1#DIRECT
     "rule-set:geosite-category-ru,geosite-tld-ru,geosite-gov-ru,geosite-bank-ru,geosite-yandex,geosite-ru-available-only-inside":
       - https://77.88.8.8/dns-query#DIRECT
-      - tls://77.88.8.8#DIRECT
       - 77.88.8.8#DIRECT
       - 77.88.8.1#DIRECT
 
