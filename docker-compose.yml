@@ -16,9 +16,6 @@ services:
       - type: bind
         source: ./data
         target: /root/.config/mihomo
-      - type: bind
-        source: ./config.yaml
-        target: /root/.config/mihomo/config.yaml
 
   # source: https://github.com/MetaCubeX/metacubexd
   metacubexd:
