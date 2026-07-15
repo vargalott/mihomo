@@ -5,7 +5,7 @@ A proxy setup using [mihomo](https://wiki.metacubex.one/en/) designed for a spec
 ```
 git clone https://github.com/vargalott/mihomo
 cd mihomo
-cp config.example.yaml config.yaml
+mkdir data && cp config.example.yaml data/config.yaml
 # edit config.yaml
 docker compose up -d
 ```
