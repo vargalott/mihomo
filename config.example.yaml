@@ -193,19 +193,19 @@ x-proxy-providers-defaults: &pp-defaults
   exclude-type: ss|vmess
 
 x-proxy-providers-override:
-  udp-and-dialer: &ppo-1
+  x-regular: &x-regular
     override:
       dialer-proxy: GATEWAY-PROXY
       udp: true
 
-  udp-only: &ppo-2
+  x-whitelist: &x-whitelist
     override:
       udp: true
 
 proxy-providers:
   # source: https://github.com/sakha1370/OpenRay
   regular-openray:
-    <<: [*pp-defaults, *ppo-1]
+    <<: [*pp-defaults, *x-regular]
     url: https://raw.githubusercontent.com/sakha1370/OpenRay/main/output/kind/trojan.txt
     path: ./providers/regular-openray.txt
 
@@ -213,13 +213,13 @@ proxy-providers:
 
   # source: https://github.com/igareck/vpn-configs-for-russia
   whitelist-cidr-georu:
-    <<: [*pp-defaults, *ppo-2]
+    <<: [*pp-defaults, *x-whitelist]
     url: https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-all.txt
     path: ./providers/whitelist-cidr-georu.txt
 
   # source: https://github.com/ksenkovsolo/HardVPN-bypass-WhiteLists-
   whitelist-bypass:
-    <<: [*pp-defaults, *ppo-2]
+    <<: [*pp-defaults, *x-whitelist]
     url: https://raw.githubusercontent.com/ksenkovsolo/HardVPN-bypass-WhiteLists-/main/vpn-lte/WHITELIST-ALL.txt
     path: ./providers/whitelist-bypass.txt
 
