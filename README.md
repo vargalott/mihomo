@@ -51,10 +51,11 @@ Traffic enters Mihomo two ways:
 
 #### Example protocols
 
-| | | |
-|-|-|-|
-| `VLESS` | VLESS + XTLS Vision + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (chrome) |
-| `HYSTERIA` | Hysteria2 (QUIC-based) | fast for high-bandwidth; password auth |
+| | |
+|-|-|
+| VLESS + TCP(XTLS Vision) + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (chrome) |
+| VLESS + XHTTP + REALITY | multiplexed transport with stream-one mode and connection reuse via xmux |
+| Hysteria2 (QUIC-based) | fast for high-bandwidth; password auth |
 
 ---
 
