@@ -145,7 +145,7 @@ listeners:
 # see more: https://wiki.metacubex.one/en/config/proxies/
 #
 proxies:
-  - name: VLESS
+  - name: VLESS-TCP-REALITY
     dialer-proxy: GATEWAY-PROXY
     type: vless
     network: tcp
@@ -157,7 +157,39 @@ proxies:
     packet-encoding: xudp
     tls: true
     servername: SNI
-    client-fingerprint: chrome
+    client-fingerprint: firefox
+    encryption: ""
+    reality-opts:
+      public-key: PBK
+      short-id: SID
+
+  - name: VLESS-XHTTP-REALITY
+    dialer-proxy: GATEWAY-PROXY
+    type: vless
+    network: xhttp
+    alpn: [h2]
+    server: DOMAIN/IP
+    port: 443
+    udp: true
+    uuid: UUID
+    packet-encoding: xudp
+    tls: true
+    servername: SNI
+    client-fingerprint: firefox
+    encryption: ""
+    xhttp-opts:
+      path: "/SECRET"
+      host: SNI
+      mode: stream-one
+      no-grpc-header: true
+      reuse-settings:
+        # pick only max-concurrency OR max-connections
+        # max-concurrency: "16-32" # max concurrent requests per connection before opening a new one
+        max-connections: 25 # max concurrent connections, reused once reached
+        c-max-reuse-times: 0 # unlimited
+        h-max-request-times: 600-900
+        h-max-reusable-secs: 1800-3000
+        h-keep-alive-period: 0 # default keep-alive interval
     reality-opts:
       public-key: PBK
       short-id: SID
@@ -251,7 +283,8 @@ proxy-groups:
     proxies:
       - REJECT
       # - DIRECT
-      - VLESS
+      - VLESS-TCP-REALITY
+      - VLESS-XHTTP-REALITY
       - HYSTERIA
       - REGULAR-OPENRAY
 
