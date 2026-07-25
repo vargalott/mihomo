@@ -19,6 +19,7 @@ tcp-concurrent: true
 external-controller: 127.0.0.1:9999
 secret: "secret"
 
+skip-auth-prefixes: []
 # most gui clients ignore listener-scoped mixed port (http/socks) settings
 # defined under `listeners:` and require the global-scope equivalents instead;
 # if per-listener auth or port config isn't being picked up, fall back to:
