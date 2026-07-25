@@ -77,14 +77,14 @@ sniffer:
 
 #
 # DNS settings
-# fake-ip     all traffic by default (198.18.0.0/15 pool), upstream DNS resolver
-# real-ip     .lan through local network resolver
-#             STUN/TURN through Cloudflare DNS
-#             all RU rule-sets through Yandex DNS
 #
 # see more: https://wiki.metacubex.one/en/config/dns/
 #           https://wiki.metacubex.one/en/config/dns/diagram/
 #
+x-dns-yandex: &x-dns-yandex
+  - https://77.88.8.8/dns-query#DIRECT
+  - 77.88.8.8#DIRECT
+
 dns:
   enable: true
   cache-algorithm: arc
@@ -95,17 +95,26 @@ dns:
   default-nameserver:
     - 1.1.1.1
     - 1.0.0.1
-  nameserver:
+    - 77.88.8.8
+  proxy-server-nameserver:
     - https://1.1.1.1/dns-query#DIRECT
     - https://1.0.0.1/dns-query#DIRECT
+    - https://77.88.8.8/dns-query#DIRECT
+    - 77.88.8.8#DIRECT
+  direct-nameserver: *x-dns-yandex
+  direct-nameserver-follow-policy: true
 
   nameserver-policy:
-    "+.lan":
-      - 10.1.0.1#DIRECT
-    "rule-set:geosite-category-ru,geosite-tld-ru,geosite-gov-ru,geosite-bank-ru,geosite-yandex,geosite-ru-available-only-inside":
-      - https://77.88.8.8/dns-query#DIRECT
-      - 77.88.8.8#DIRECT
-      - 77.88.8.1#DIRECT
+    "+.lan": 10.1.0.1
+    "rule-set:geosite-category-ru": *x-dns-yandex
+    "rule-set:geosite-tld-ru": *x-dns-yandex
+    "rule-set:geosite-gov-ru": *x-dns-yandex
+    "rule-set:geosite-bank-ru": *x-dns-yandex
+    "rule-set:geosite-yandex": *x-dns-yandex
+
+  nameserver:
+    - https://1.1.1.1/dns-query#PROXY
+    - https://1.0.0.1/dns-query#PROXY
 
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.0/15
@@ -116,12 +125,11 @@ dns:
     - DOMAIN-KEYWORD,stun,real-ip
     - DOMAIN-KEYWORD,turn,real-ip
 
-    - RULE-SET,geosite-category-ru,real-ip
-    - RULE-SET,geosite-tld-ru,real-ip
-    - RULE-SET,geosite-gov-ru,real-ip
     - RULE-SET,geosite-bank-ru,real-ip
     - RULE-SET,geosite-yandex,real-ip
-    - RULE-SET,geosite-ru-available-only-inside,real-ip
+    - RULE-SET,geosite-gov-ru,real-ip
+    - RULE-SET,geosite-category-ru,real-ip
+    - RULE-SET,geosite-tld-ru,real-ip
 
     - MATCH,fake-ip
 
@@ -213,8 +221,6 @@ proxies:
 # PROXY PROVIDERS settings
 # x-proxy-providers-defaults - common fields
 # x-proxy-providers-override - additional common fields
-#
-# regular-openray, whitelist-cidr-georu as a providers examples
 #
 # see more: https://wiki.metacubex.one/en/config/proxy-providers/
 #           https://wiki.metacubex.one/en/config/proxy-providers/content/
