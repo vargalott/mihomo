@@ -73,7 +73,7 @@ Domains matching `real-ip` rules are resolved to actual addresses so that IP-bas
 
 | | | | |
 |-|-|-|-|
-| `default-nameserver` | Cloudflare (`1.1.1.1`/`1.0.0.1`) + Yandex (`77.88.8.8`) | bootstrap DNS - resolves hostnames of DoH/DoT servers themselves if present; must be plain IPs; actual | #DIRECT |
+| `default-nameserver` | Cloudflare (`1.1.1.1`/`1.0.0.1`) + Yandex (`77.88.8.8`/`77.88.8.1`) | bootstrap DNS - resolves hostnames of DoH/DoT servers themselves if present; must be plain IPs; actual | #DIRECT |
 | `proxy-server-nameserver` | Cloudflare DoH + Yandex DoH/DoT | resolves proxy servers domain names only (avoids chicken-and-egg routing loop) | #DIRECT |
 | `nameserver` | Cloudflare DoH (`1.1.1.1`/`1.0.0.1`) | primary resolver for general queries not matched by `nameserver-policy` | #PROXY |
 | `nameserver-policy` | router (`10.1.0.1`) for `.lan`; Yandex DoH/DoT/plain for RU sets | per-rule override, takes priority over `nameserver` | #DIRECT |
