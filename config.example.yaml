@@ -81,9 +81,11 @@ sniffer:
 # see more: https://wiki.metacubex.one/en/config/dns/
 #           https://wiki.metacubex.one/en/config/dns/diagram/
 #
-x-dns-yandex: &x-dns-yandex
+x-dns-direct-yandex: &x-dns-direct-yandex
   - https://77.88.8.8/dns-query#DIRECT
+  - https://77.88.8.1/dns-query#DIRECT
   - 77.88.8.8#DIRECT
+  - 77.88.8.1#DIRECT
 
 dns:
   enable: true
@@ -96,21 +98,22 @@ dns:
     - 1.1.1.1
     - 1.0.0.1
     - 77.88.8.8
+    - 77.88.8.1
   proxy-server-nameserver:
     - https://1.1.1.1/dns-query#DIRECT
     - https://1.0.0.1/dns-query#DIRECT
     - https://77.88.8.8/dns-query#DIRECT
-    - 77.88.8.8#DIRECT
-  direct-nameserver: *x-dns-yandex
+    - https://77.88.8.1/dns-query#DIRECT
+  direct-nameserver: *x-dns-direct-yandex
   direct-nameserver-follow-policy: true
 
   nameserver-policy:
     "+.lan": 10.1.0.1
-    "rule-set:geosite-category-ru": *x-dns-yandex
-    "rule-set:geosite-tld-ru": *x-dns-yandex
-    "rule-set:geosite-gov-ru": *x-dns-yandex
-    "rule-set:geosite-bank-ru": *x-dns-yandex
-    "rule-set:geosite-yandex": *x-dns-yandex
+    "rule-set:geosite-bank-ru": *x-dns-direct-yandex
+    "rule-set:geosite-yandex": *x-dns-direct-yandex
+    "rule-set:geosite-category-ru": *x-dns-direct-yandex
+    "rule-set:geosite-gov-ru": *x-dns-direct-yandex
+    "rule-set:geosite-tld-ru": *x-dns-direct-yandex
 
   nameserver:
     - https://1.1.1.1/dns-query#PROXY
@@ -120,7 +123,7 @@ dns:
   fake-ip-range: 198.18.0.0/15
   fake-ip-filter-mode: rule
   fake-ip-filter:
-    - DOMAIN,localhost,real-ip # 127.0.0.1
+    - DOMAIN,localhost,real-ip
     - DOMAIN-SUFFIX,lan,real-ip
     - DOMAIN-KEYWORD,stun,real-ip
     - DOMAIN-KEYWORD,turn,real-ip
