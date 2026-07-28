@@ -197,7 +197,7 @@ proxies:
       reuse-settings:
         # pick only max-concurrency OR max-connections
         # max-concurrency: "16-32" # max concurrent requests per connection before opening a new one
-        max-connections: 25 # max concurrent connections, reused once reached
+        max-connections: "16-32" # max concurrent connections, reused once reached
         c-max-reuse-times: 0 # unlimited
         h-max-request-times: 600-900
         h-max-reusable-secs: 1800-3000
