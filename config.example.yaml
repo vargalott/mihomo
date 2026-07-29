@@ -198,9 +198,9 @@ proxies:
         # pick only max-concurrency OR max-connections
         # max-concurrency: "16-32" # max concurrent requests per connection before opening a new one
         max-connections: "16-32" # max concurrent connections, reused once reached
-        c-max-reuse-times: 0 # unlimited
-        h-max-request-times: 600-900
-        h-max-reusable-secs: 1800-3000
+        c-max-reuse-times: "0" # unlimited
+        h-max-request-times: "600-900"
+        h-max-reusable-secs: "1800-3000"
         h-keep-alive-period: 0 # default keep-alive interval
     reality-opts:
       public-key: PBK
