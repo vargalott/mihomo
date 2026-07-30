@@ -37,6 +37,7 @@ profile:
 # see more: https://wiki.metacubex.one/en/config/inbound/tun/
 #
 tun:
+  enable: false
   stack: gvisor
   auto-route: true
   auto-redirect: true
@@ -170,7 +171,7 @@ proxies:
     tls: true
     servername: SNI
     client-fingerprint: firefox
-    encryption: ""
+    encryption: none
     reality-opts:
       public-key: PBK
       short-id: SID
@@ -179,7 +180,6 @@ proxies:
     dialer-proxy: GATEWAY-PROXY
     type: vless
     network: xhttp
-    alpn: [h2]
     server: DOMAIN/IP
     port: 443
     udp: true
@@ -188,7 +188,7 @@ proxies:
     tls: true
     servername: SNI
     client-fingerprint: firefox
-    encryption: ""
+    encryption: none
     xhttp-opts:
       path: "/SECRET"
       host: SNI
