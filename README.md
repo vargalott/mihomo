@@ -56,6 +56,7 @@ Traffic enters Mihomo two ways:
 | VLESS + TCP(XTLS Vision) + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (firefox) |
 | VLESS + XHTTP + REALITY | multiplexed transport with stream-one mode and connection reuse via xmux; client-fingerprint spoofing (firefox) |
 | Hysteria2 (QUIC-based) | fast for high-bandwidth |
+| AnyTLS | a proxy protocol that tries to mitigate nested TLS handshake issues |
 
 ---
 
@@ -128,7 +129,7 @@ All fetched through `PROXY`, cached locally, `interval: 86400` (daily refresh).
 
 ### Notes
 
-- Don't forget to change the placeholder values, such as `secret`, `username`, `password`, `SERVER`, `UUID`, `PBK`, `SID`;
+- Don't forget to change the placeholder values, such as `SECRET`, `USERNAME`, `PASSWORD`, `SERVER`, `UUID`, `PBK`, `SID`, etc;
 - `listeners:` block - defines per-listener mixed-in auth, but most GUI clients only read the global `mixed-port` / `authentication` settings (or even sets them unconditionally) and silently ignore listener-scoped config; if auth isn't being enforced, fall back to the commented-out global equivalents in the config;
 - It is a good design practice to make `proxies: - REJECT` for each `proxy-group` that come from `proxy-provider`; serves as a kill-switch in cases of broken upstream subscription;
 - `REGULAR-OPENRAY`, `WHITELIST-CIDR-GEORU`, `WHITELIST-BYPASS` are just an examples of importing generic proxy subscriptions(plain text or base64 `vless://`, `ss://`, etc remote configs);

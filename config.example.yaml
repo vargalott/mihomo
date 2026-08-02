@@ -17,7 +17,7 @@ find-process-mode: always
 tcp-concurrent: true
 
 external-controller: 127.0.0.1:9999
-secret: "secret"
+secret: "SECRET"
 
 skip-auth-prefixes: []
 # most gui clients ignore listener-scoped mixed port (http/socks) settings
@@ -149,8 +149,8 @@ listeners:
     port: 8888
     udp: true
     users:
-      - username: username
-        password: "password"
+      - username: USERNAME
+        password: "PASSWORD"
 
 #
 # PROXIES settings
@@ -214,11 +214,20 @@ proxies:
     # down: "100 Mbps"
     port: 443
     udp: true
-    password: "username:password"
+    password: "USERNAME:PASSWORD"
     # obfs: salamander
-    # obfs-password: ""
+    # obfs-password: "OBFS-PASSWORD"
     sni: SNI
     skip-cert-verify: false
+
+  - name: ANYTLS
+    type: anytls
+    server: DOMAIN/IP
+    port: 443
+    password: "PASSWORD"
+    client-fingerprint: firefox
+    udp: true
+    sni: SNI
 
 #
 # PROXY PROVIDERS settings
@@ -296,6 +305,7 @@ proxy-groups:
       - VLESS-TCP-REALITY
       - VLESS-XHTTP-REALITY
       - HYSTERIA
+      - ANYTLS
       - REGULAR-OPENRAY
 
   - name: GATEWAY-PROXY
