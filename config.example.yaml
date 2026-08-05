@@ -442,14 +442,6 @@ rule-providers:
     format: mrs
     behavior: domain
 
-  # source: https://github.com/itdoginfo/allow-domains/
-  geosite-ru-available-only-inside:
-    <<: [*rp-defaults]
-    url: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/outside-raw.lst
-    path: ./rules/geosite-itdoginfo-allow-domains-outside.lst
-    format: text
-    behavior: domain
-
 #
 # RULES settings
 #
@@ -463,9 +455,8 @@ rules:
   - RULE-SET,geosite-telegram,PROXY
   - RULE-SET,geoip-telegram,PROXY,no-resolve
 
-  - RULE-SET,geosite-yandex,GATEWAY-RU
   - RULE-SET,geosite-bank-ru,GATEWAY-RU
-  - RULE-SET,geosite-ru-available-only-inside,GATEWAY-RU
+  - RULE-SET,geosite-yandex,GATEWAY-RU
   - RULE-SET,geosite-gov-ru,GATEWAY-RU
   - RULE-SET,geosite-category-ru,GATEWAY-RU
   - RULE-SET,geosite-tld-ru,GATEWAY-RU
