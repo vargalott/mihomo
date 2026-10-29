@@ -176,7 +176,7 @@ proxies:
       public-key: PBK
       short-id: SID
 
-  - name: VLESS-XHTTP-REALITY
+  - name: VLESS-XHTTP-VLESSENC
     dialer-proxy: GATEWAY-PROXY
     type: vless
     network: xhttp
@@ -188,9 +188,9 @@ proxies:
     tls: true
     servername: SNI
     client-fingerprint: firefox
-    encryption: none
+    encryption: "VLESSENC/encryption"
     xhttp-opts:
-      path: "/SECRET"
+      path: "/XHTTP-SUBPATH"
       host: SNI
       mode: stream-one
       no-grpc-header: true
@@ -202,9 +202,6 @@ proxies:
         h-max-request-times: "600-900"
         h-max-reusable-secs: "1800-3000"
         h-keep-alive-period: 0 # default keep-alive interval
-    reality-opts:
-      public-key: PBK
-      short-id: SID
 
   - name: HYSTERIA
     dialer-proxy: GATEWAY-PROXY
@@ -303,7 +300,7 @@ proxy-groups:
       - REJECT
       # - DIRECT
       - VLESS-TCP-REALITY
-      - VLESS-XHTTP-REALITY
+      - VLESS-XHTTP-VLESSENC
       - HYSTERIA
       - ANYTLS
       - REGULAR-OPENRAY
