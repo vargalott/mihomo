@@ -23,7 +23,7 @@ services:
     image: ghcr.io/metacubex/metacubexd:latest
     restart: always
     ports:
-      - 10000:80
+      - 127.0.0.1:10000:80
     environment:
       - DEFAULT_BACKEND_URL=http://127.0.0.1:9999
 
@@ -33,7 +33,7 @@ services:
   #   image: ghcr.io/zephyruso/zashboard:latest
   #   restart: always
   #   ports:
-  #     - 10001:80
+  #     - 127.0.0.1:10001:80
 
   # source: https://github.com/haishanh/yacd
   # yacd:
@@ -41,4 +41,4 @@ services:
   #   image: ghcr.io/haishanh/yacd:master
   #   restart: always
   #   ports:
-  #     - 10002:80
+  #     - 127.0.0.1:10002:80
