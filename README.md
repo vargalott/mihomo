@@ -54,7 +54,7 @@ Traffic enters Mihomo two ways:
 | | |
 |-|-|
 | VLESS + TCP(XTLS Vision) + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (firefox) |
-| VLESS + XHTTP + REALITY | multiplexed transport with stream-one mode and connection reuse via xmux; client-fingerprint spoofing (firefox) |
+| VLESS + XHTTP + VLESSENC | multiplexed transport with stream-one mode and connection reuse via xmux; client-fingerprint spoofing (firefox) |
 | Hysteria2 (QUIC-based) | fast for high-bandwidth |
 | AnyTLS | a proxy protocol that tries to mitigate nested TLS handshake issues |
 
