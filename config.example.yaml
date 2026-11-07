@@ -176,7 +176,7 @@ proxies:
       public-key: PBK
       short-id: SID
 
-  - name: VLESS-XHTTP-VLESSENC
+  - name: VLESSENC-XHTTP-VISION
     dialer-proxy: GATEWAY-PROXY
     type: vless
     network: xhttp
@@ -185,10 +185,11 @@ proxies:
     udp: true
     uuid: UUID
     packet-encoding: xudp
+    flow: xtls-rprx-vision
     tls: true
     servername: SNI
     client-fingerprint: firefox
-    encryption: "VLESSENC/encryption"
+    encryption: "vlessenc/encryption"
     xhttp-opts:
       path: "/XHTTP-SUBPATH"
       host: SNI
@@ -265,12 +266,6 @@ proxy-providers:
     url: https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-all.txt
     path: ./providers/whitelist-cidr-georu.txt
 
-  # source: https://github.com/ksenkovsolo/HardVPN-bypass-WhiteLists-
-  whitelist-bypass:
-    <<: [*pp-defaults, *x-whitelist]
-    url: https://raw.githubusercontent.com/ksenkovsolo/HardVPN-bypass-WhiteLists-/main/vpn-lte/WHITELIST-ALL.txt
-    path: ./providers/whitelist-bypass.txt
-
 #
 # PROXY GROUPS settings
 # x-proxy-groups-defaults - common fields
@@ -300,7 +295,7 @@ proxy-groups:
       - REJECT
       # - DIRECT
       - VLESS-TCP-REALITY
-      - VLESS-XHTTP-VLESSENC
+      - VLESSENC-XHTTP-VISION
       - HYSTERIA
       - ANYTLS
       - REGULAR-OPENRAY
@@ -313,7 +308,6 @@ proxy-groups:
       - REJECT
       - DIRECT
       - WHITELIST-CIDR-GEORU
-      - WHITELIST-BYPASS
 
   - name: GATEWAY-RU
     <<: [*pg-defaults]
@@ -323,7 +317,6 @@ proxy-groups:
       - REJECT
       - DIRECT
       - WHITELIST-CIDR-GEORU
-      - WHITELIST-BYPASS
 
   # ---
 
@@ -344,14 +337,6 @@ proxy-groups:
       - REJECT
     use:
       - whitelist-cidr-georu
-
-  - name: WHITELIST-BYPASS
-    <<: [*pg-defaults]
-    type: select
-    proxies:
-      - REJECT
-    use:
-      - whitelist-bypass
 
 #
 # RULE PROVIDERS settings
