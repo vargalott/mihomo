@@ -24,7 +24,7 @@ docker compose up -d
 | `GATEWAY-PROXY` | Controls how `PROXY`-bound traffic (`VLESS`/`HYSTERIA`/etc) exits - i.e., what the proxy client itself routes through |
 | `GATEWAY-RU` | Controls how `RU` traffic exits independently |
 
-Main proxies carries `dialer-proxy: GATEWAY-PROXY` - this means the proxy client connections themselves are subject to a second routing decision; for example, you can route main proxy through `WHITELIST-CIDR-GEORU` or `WHITELIST-BYPASS` (a split-tunnel whitelist of RU CIDRs) instead of `DIRECT` so that the proxy server appears reachable even if the local ISP/DPI applies selective blocking.
+Main proxies carries `dialer-proxy: GATEWAY-PROXY` - this means the proxy client connections themselves are subject to a second routing decision; for example, you can route main proxy through `WHITELIST-CIDR-GEORU`(a split-tunnel whitelist of RU CIDRs) instead of `DIRECT` so that the proxy server appears reachable even if the local ISP/DPI applies selective blocking.
 
 ```
 traffic
@@ -36,11 +36,11 @@ mihomo (tun/mixed)
    |--> UDP/443 (quic) ---------------> REJECT
    |--> private ranges ---------------> DIRECT
    |
-   |--> specific rules(proxy) --------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT | WHITELIST-CIDR-GEORU | WHITELIST-BYPASS
+   |--> specific rules(proxy) --------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT | WHITELIST-CIDR-GEORU
    |
-   |--> RU domains/ips ---------------> GATEWAY-RU -----> DIRECT | WHITELIST-CIDR-GEORU | WHITELIST-BYPASS
+   |--> RU domains/ips ---------------> GATEWAY-RU -----> DIRECT | WHITELIST-CIDR-GEORU
    |
-   |--> everything else --------------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT | WHITELIST-CIDR-GEORU | WHITELIST-BYPASS
+   |--> everything else --------------> PROXY ----------> dialer-proxy: GATEWAY-PROXY --> DIRECT | WHITELIST-CIDR-GEORU
 ```
 
 #### Ingress
@@ -53,8 +53,8 @@ Traffic enters Mihomo two ways:
 
 | | |
 |-|-|
-| VLESS + TCP(XTLS Vision) + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (firefox) |
-| VLESS + XHTTP + VLESSENC | multiplexed transport with stream-one mode and connection reuse via xmux; client-fingerprint spoofing (firefox) |
+| VLESS + TCP + REALITY | high-performance; censorship-resistant; client-fingerprint spoofing (firefox) |
+| VLESS Encryption + XHTTP + XTLS Vision | multiplexed transport with stream-one mode and connection reuse via xmux; client-fingerprint spoofing (firefox) |
 | Hysteria2 (QUIC-based) | fast for high-bandwidth |
 | AnyTLS | a proxy protocol that tries to mitigate nested TLS handshake issues |
 
@@ -123,7 +123,6 @@ All fetched through `PROXY`, cached locally, `interval: 86400` (daily refresh).
 | `geosite-gov-ru` | Domain | [official meta-rules-dat](https://github.com/MetaCubeX/meta-rules-dat/tree/meta) |
 | `geosite-bank-ru` | Domain | [official meta-rules-dat](https://github.com/MetaCubeX/meta-rules-dat/tree/meta) |
 | `geosite-yandex` | Domain | [official meta-rules-dat](https://github.com/MetaCubeX/meta-rules-dat/tree/meta) |
-| `geosite-ru-available-only-inside` | Domain | [itdoginfo/allow-domains](https://github.com/itdoginfo/allow-domains) |
 
 ---
 
@@ -132,7 +131,7 @@ All fetched through `PROXY`, cached locally, `interval: 86400` (daily refresh).
 - Don't forget to change the placeholder values, such as `SECRET`, `USERNAME`, `PASSWORD`, `SERVER`, `UUID`, `PBK`, `SID`, etc;
 - `listeners:` block - defines per-listener mixed-in auth, but most GUI clients only read the global `mixed-port` / `authentication` settings (or even sets them unconditionally) and silently ignore listener-scoped config; if auth isn't being enforced, fall back to the commented-out global equivalents in the config;
 - It is a good design practice to make `proxies: - REJECT` for each `proxy-group` that come from `proxy-provider`; serves as a kill-switch in cases of broken upstream subscription;
-- `REGULAR-OPENRAY`, `WHITELIST-CIDR-GEORU`, `WHITELIST-BYPASS` are just an examples of importing generic proxy subscriptions(plain text or base64 `vless://`, `ss://`, etc remote configs);
+- `REGULAR-OPENRAY`, `WHITELIST-CIDR-GEORU` are just an examples of importing generic proxy subscriptions(plain text or base64 `vless://`, `ss://`, etc remote configs);
 - `ntp`: Cloudflare time server, synced every 30 minutes;
 - `sniffer`: `HTTP (80, 8080–8880)`, `TLS (443, 8443)`, `QUIC (443, 8443)` - enables domain sniffing from raw TCP/UDP for accurate rule matching;
 - `external-controller`: `127.0.0.1:8890` - for dashboards (metacubexd, yacd etc);
