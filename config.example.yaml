@@ -218,6 +218,26 @@ proxies:
     sni: SNI
     skip-cert-verify: false
 
+  - name: HYSTERIA-REALM
+    dialer-proxy: GATEWAY-PROXY
+    type: hysteria2
+    server: RENDEZVOUS DOMAIN/IP
+    # up: "100 Mbps"
+    # down: "100 Mbps"
+    port: 443
+    udp: true
+    password: "USERNAME:PASSWORD"
+    # obfs: salamander
+    # obfs-password: "OBFS-PASSWORD"
+    sni: SNI
+    skip-cert-verify: false
+    realm-opts:
+      enable: true
+      server-url: https://rendezvous.example.com/
+      token: TOKEN
+      realm-id: REALM-NAME
+      skip-cert-verify: true
+
   - name: ANYTLS
     type: anytls
     server: DOMAIN/IP
@@ -297,6 +317,7 @@ proxy-groups:
       - VLESS-TCP-REALITY
       - VLESSENC-XHTTP-VISION
       - HYSTERIA
+      - HYSTERIA-REALM
       - ANYTLS
       - REGULAR-OPENRAY
 
