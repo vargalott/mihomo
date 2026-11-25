@@ -221,10 +221,10 @@ proxies:
   - name: HYSTERIA-REALM
     dialer-proxy: GATEWAY-PROXY
     type: hysteria2
-    server: RENDEZVOUS DOMAIN/IP
+    server: 127.0.0.1
+    port: 1
     # up: "100 Mbps"
     # down: "100 Mbps"
-    port: 443
     udp: true
     password: "USERNAME:PASSWORD"
     # obfs: salamander
@@ -233,10 +233,14 @@ proxies:
     skip-cert-verify: false
     realm-opts:
       enable: true
-      server-url: https://rendezvous.example.com/
+      server-url: https://rendezvous.example.com:port/
       token: TOKEN
       realm-id: REALM-NAME
       skip-cert-verify: true
+      stun-servers:
+        - stun.nextcloud.com:3478
+        - stun.sip.us:3478
+        - global.stun.twilio.com:3478
 
   - name: ANYTLS
     type: anytls
